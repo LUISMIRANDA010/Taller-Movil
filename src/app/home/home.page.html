@@ -1,17 +1,47 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
+    <ion-title>Task Manager</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
+    <ion-item>
+      <ion-label position="floating" >Title</ion-label>
+      <ion-input formControlName="title" type="text"></ion-input>
+    </ion-item>
+    <div *ngIf="taskForm.get('title')?.touched && taskForm.get('title')?.invalid" class="error-message">
+      <div *ngIf="taskForm.get('title')?.hasError('required')">Title is required.</div>
+      <div *ngIf="taskForm.get('title')?.hasError('minlength')">Title must be at least 3 characters long.</div>
+    </div>
 
-  
+    <ion-item>
+      <ion-label position="floating">Description</ion-label>
+      <ion-textarea formControlName="description"></ion-textarea>
+    </ion-item>
+    <div *ngIf="taskForm.get('description')?.touched && taskForm.get('description')?.invalid" class="error-message">
+      <div *ngIf="taskForm.get('description')?.hasError('required')">Description is required.</div>
+      <div *ngIf="taskForm.get('description')?.hasError('minlength')">Description must be at least 10 characters long.</div>
+    </div>
+
+    <ion-item>
+      <ion-label>Done</ion-label>
+      <ion-checkbox formControlName="done"></ion-checkbox>
+    </ion-item>
+
+    <ion-button expand="full" type="submit" [disabled]="taskForm.invalid">Add Task</ion-button>
+  </form>
+
+  <ion-list *ngIf="tasks.length > 0">
+    <ion-item *ngFor="let task of tasks; let i = index">
+      <ion-label>
+        {{ task.title }} - {{ task.description }}
+      </ion-label>
+      <ion-checkbox [(ngModel)]="task.done" (ionChange)="toggleDone(i)"></ion-checkbox>
+    </ion-item>
+  </ion-list>
+
+  <ion-item *ngIf="tasks.length === 0">
+    <ion-label>No tasks available.</ion-label>
+  </ion-item>
 </ion-content>
